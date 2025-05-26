@@ -8,6 +8,15 @@ source "https://rubygems.org"
 # This will help ensure the proper Jekyll version is running.
 # Happy Jekylling!
 gem "jekyll", "~> 4.3.4"
+# Chirpy theme
+gem "jekyll-theme-chirpy", "~> 7.3", ">= 7.3.0"
+gem 'jekyll-seo-tag', '~> 2.8'
+gem 'jekyll-sitemap', '~> 1.4'
+gem 'jekyll-paginate', '~> 1.1'
+gem 'jekyll-mentions', '~> 1.6'
+gem 'jemoji', '~> 0.13.0'
+gem 'jekyll-archives', '~> 2.3'
+
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 gem "minima", "~> 2.5"
 # If you want to use GitHub Pages, remove the "gem "jekyll"" above and
