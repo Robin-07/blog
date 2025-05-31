@@ -3,8 +3,6 @@ layout: page
 title: About
 ---
 
-
-
 #### Hi :wave:, I'm Robin.
 
 I'm a Software Developer with around 4 years of experience in designing and building **scalable backend APIs**, **efficient SQL databases**, **seamless UIs** and more recently, **real-time communication systems** where *uptime, availability and performance* are extremely critical.

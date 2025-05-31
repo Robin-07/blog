@@ -1,0 +1,4 @@
+tabs:
+  # format: <filename_without_extension>: <value>
+  home: Home
+  archives: Blog
