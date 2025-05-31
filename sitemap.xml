@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>https://robin-07.github.io//blog/tech/2025/05/27/welcome-to-jekyll.html</loc>
+<loc>https://robin-07.github.io/blog/welcome/</loc>
 <lastmod>2025-05-27T04:00:00+05:30</lastmod>
 </url>
 <url>
-<loc>https://robin-07.github.io//blog/about/</loc>
+<loc>https://robin-07.github.io/blog/archives/</loc>
+<lastmod>2025-05-31T05:57:15+05:30</lastmod>
 </url>
 <url>
-<loc>https://robin-07.github.io//blog/</loc>
+<loc>https://robin-07.github.io/blog/</loc>
 </url>
 </urlset>
