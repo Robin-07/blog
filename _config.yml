@@ -18,24 +18,36 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
+# Site settings
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+
+# Tabs settings
+collections:
+  tabs:
+    output: true        # MUST be here
+    sort_by: order
+
+# Profile settings
 title: Robin Sharma
+tagline: Software Developer
 email: robinrythm123@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "/blog" # the subpath of your site, e.g. /blog
-url: "https://robin-07.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: Rabin_karp
-github_username:  Robin-07
+  Full-stack Software Developer
 avatar:  "/assets/images/avatar.jpg"
 
-# Author
-author:
-  name:    "Robin Sharma"
-  avatar:  "/assets/images/avatar.jpg"
-  bio:     "Software Developer"
-  github:  Robin-07
+# Social settings
+twitter: 
+  username: Rabin_karp
+github:  
+  username: Robin-07
+social:
+  name: Robin
+  email: robinrythm123@gmail.com
+
+# Theme settings
+theme_mode: light
+
 
 # Build settings
 theme: jekyll-theme-chirpy
