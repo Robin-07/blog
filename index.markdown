@@ -23,5 +23,9 @@ Led end-to-end design, development and documentation.
 Built for scale with Python, NodeJS, Go and a few other technologies to be kept secret ;)
 
 
+#### [BitMCP](https://github.com/Robin-07/bitmcp){:target="_blank"}
+A high-level protocol and library for building a peer-to-peer MCP network; inspired by BitTorrent.
+This project is currently in the ideation stage.
+
 #### [VoIP Dialer](https://chromewebstore.google.com/detail/frejun-chrome-dialler-plu/eninbjdhgaccikhclpomppfcclammnoc?hl=en){:target="_blank"}
 A Chrome extension with **3000+ daily active users** which allows users to make/receive calls directly from the browser. Powered by **WebRTC** and **SIP.js**.
