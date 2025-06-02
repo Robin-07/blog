@@ -16,6 +16,7 @@ gem 'jekyll-paginate', '~> 1.1'
 gem 'jekyll-mentions', '~> 1.6'
 gem 'jemoji', '~> 0.13.0'
 gem 'jekyll-archives', '~> 2.3'
+gem 'jekyll-redirect-from'
 
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 gem "minima", "~> 2.5"

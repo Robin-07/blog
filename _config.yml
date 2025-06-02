@@ -59,6 +59,7 @@ plugins:
   - jekyll-mentions
   - jemoji
   - jekyll-archives
+  - jekyll-redirect-from
 
 # Web Analytics Settings
 analytics:
