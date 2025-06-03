@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-#### Hi :wave:, I'm Robin.
+#### Hi :wave: I'm Robin.
 
 I'm a Software Developer with around 4 years of experience in designing and building **scalable backend APIs**, **efficient SQL databases**, **seamless UIs** and more recently, **real-time communication systems** where *uptime, availability and performance* are extremely critical.
 
@@ -12,7 +12,7 @@ My day-to-day responsibilities include product discussions, system design, devel
 
 Being an obsessive learner and problem-solver, I believe my skills are not tied to any specific set of technologies and that *using the right tool for the job* is the way to go.
 
-I'm always on the lookout for exciting problems to work on. Please feel free to get in touch with me at *robinrythm123@gmail.com*.
+I'm always on the lookout for exciting problems to work on. Please feel free to get in touch with me at [hello@robinsharma.me](mailto:hello@robinsharma.me)
 
 ## Projects
 
