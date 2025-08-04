@@ -1,0 +1,110 @@
+---
+layout: post
+title:  "Building Conduit: A Scalable, Real-time messaging system"
+date:   2025-07-30 04:00:00 +0530
+permalink: blog/conduit/
+mermaid: true
+---
+
+In this post, I'll be going over the design and implementation of one of my recent projects, *Conduit*.\
+*Conduit* is the messaging backend powering the [AI Customer Support Platform](https://rhythmiqcx.com){:target="_blank"}, *RhythmiqCX*.
+
+## Messaging primer
+
+For clients to send/receive messages over the internet, the two main architecture models are:
+
+- Peer-to-Peer (P2P)
+- Client-Server 
+
+The **Peer-to-Peer** model has the obvious benefits of being decentralized, like *enhanced privacy*, *fault-tolerance* and no [SPOF](https://en.wikipedia.org/wiki/Single_point_of_failure){:target="_blank"}. However, from a business SaaS point of view, where things like centralized authentication, access management, billing and more recently, AI Agents are must-haves, the **Client-Server** model takes center stage.
+
+#### The Client-Server Model
+From a rather crude perspective, the **Client-Server** model is implemented as below.
+
+```mermaid
+flowchart LR
+A(Alice)
+B(Bob)
+C((App Server))
+
+A -->|Hi! What's up?| C -->|Hi! What's up?| B
+```
+
+When Alice hits send on her messaging app, the message is first routed to the App server, which, in no particular order:
+
+- Authenticates the user.
+- Checks necessary permissions.
+- Applies filters for sensitive content.
+- Persists the message to a database for durability.
+- Bills the account
+- ...
+
+And then finally routes the message to the intended recipient, Bob.
+
+## Building blocks
+
+Conduit is built using the following components.
+
+- A highly-scalable messaging server at the core.
+- A high-performance, async HTTP API.
+- A robust relational database.
+- A simple event poller/dispatcher.
+
+```mermaid
+flowchart LR
+subgraph conduit[Conduit]
+A(Async HTTP API)
+B((Messaging Server))
+C[(Database)]
+F(Event dispatcher)
+end
+```
+
+Each component is implemented using [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) tools.
+
+#### [Centrifugo](https://github.com/centrifugal/centrifugo){:target="_blank"}
+
+*Centrifugo* is a real-time, pub/sub messaging server written in Go. It provides some very valuable features like:
+
+- Real-time transports (WebSocket, SSE, gRPC etc.)
+- Built-in horizontal scalability via *Redis*
+- Online Presence information
+- JSON and protobuf support
+
+*Centrifugo* powers the real-time message delivery for *Conduit* via it's WebSocket transport. 
+Users are subscribed to their own individual channels on app startup/login, so they can receive any messages published on that channel.
+
+#### [FastAPI](https://github.com/fastapi/fastapi){:target="_blank"}
+
+*Conduit's* HTTP API, used for sending messages is built using *FastAPI* due to it's async capabilities coupled with Python's simplicity.
+
+#### [PostgreSQL](https://www.postgresql.org/){:target="_blank"}
+
+*PostgreSQL* is the rightly-proclaimed "world's most advanced open-source database". No other database comes close in my opinion.
+
+#### [Redis](https://redis.io/){:target="_blank"}
+
+At the moment, *Redis* is primarily used for scaling the *Centrifugo* cluster.
+
+## Design
+
+*Conduit* is a [distributed system](https://en.wikipedia.org/wiki/Distributed_computing){:target="_blank"} by nature and one of the (many) problems that arise when building distributed systems is when you have to update database state AND notify another service about it atomically. The two major patterns which attempt to solve this problem are [The Transactional Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html) and [The Event Sourcing Pattern](https://microservices.io/patterns/data/event-sourcing.html). *Conduit* implements the former.  
+
+When we send a message using *Conduit's* HTTP API, it is persisted in the database and a corresponding outbox event is created for it, in a single transaction. The event dispatcher, implementing [The Polling Publisher Pattern](https://microservices.io/patterns/data/polling-publisher.html), then reads events from the outbox and dispatches them to *Centrifugo* which delivers the messages in real-time to clients.
+
+## Putting it all together
+
+Let's go back to our original example of Alice sending a message to Bob.
+
+Now with an app on their phones using *Conduit* as it's messaging backend, a typical send message flow looks like this:
+
+1. Alice types out a text message for Bob and hits send.
+2. The app sends the message to *Conduit's* HTTP API via a POST request.
+3. *Conduit* authorizes the send request, persists the message AND the outbox event to the database, and returns a successful response.
+4. The event dispatcher picks up the new event in almost real-time (< 300 ms) and sends it to the messaging server.
+5. The messaging server broadcasts the event to all channel subscribers over WebSockets.
+
+## Conclusion
+
+*Conduit* is still in relatively early stages and will probably go through major changes as new problems come up.
+If you made it this far, please make sure to check out [RhythmiqCX](https://rhythmiqcx.com){:target="_blank"}, to experience *Conduit* in some real-time action!
