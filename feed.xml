@@ -1,1 +1,110 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://robinsharma.me/feed.xml" rel="self" type="application/atom+xml" /><link href="https://robinsharma.me/" rel="alternate" type="text/html" /><updated>2025-06-16T05:28:44+05:30</updated><id>https://robinsharma.me/feed.xml</id><title type="html">Robin Sharma</title><subtitle>Full-stack Software Developer</subtitle><entry><title type="html">Welcome to my blog!</title><link href="https://robinsharma.me/blog/welcome/" rel="alternate" type="text/html" title="Welcome to my blog!" /><published>2025-05-27T04:00:00+05:30</published><updated>2025-05-27T04:00:00+05:30</updated><id>https://robinsharma.me/blog/welcome-to-jekyll</id><content type="html" xml:base="https://robinsharma.me/blog/welcome/"><![CDATA[<p>Coming Soon!</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Coming Soon!]]></summary></entry></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://robinsharma.me/feed.xml" rel="self" type="application/atom+xml" /><link href="https://robinsharma.me/" rel="alternate" type="text/html" /><updated>2025-08-04T15:51:30+05:30</updated><id>https://robinsharma.me/feed.xml</id><title type="html">Robin Sharma</title><subtitle>Full-stack Software Developer</subtitle><entry><title type="html">Building Conduit: A Scalable, Real-time messaging system</title><link href="https://robinsharma.me/blog/conduit/" rel="alternate" type="text/html" title="Building Conduit: A Scalable, Real-time messaging system" /><published>2025-07-30T04:00:00+05:30</published><updated>2025-07-30T04:00:00+05:30</updated><id>https://robinsharma.me/blog/conduit</id><content type="html" xml:base="https://robinsharma.me/blog/conduit/"><![CDATA[<p>In this post, I’ll be going over the design and implementation of one of my recent projects, <em>Conduit</em>.<br />
+<em>Conduit</em> is the messaging backend powering the <a href="https://rhythmiqcx.com" target="_blank">AI Customer Support Platform</a>, <em>RhythmiqCX</em>.</p>
+
+<h2 id="messaging-primer">Messaging primer</h2>
+
+<p>For clients to send/receive messages over the internet, the two main architecture models are:</p>
+
+<ul>
+  <li>Peer-to-Peer (P2P)</li>
+  <li>Client-Server</li>
+</ul>
+
+<p>The <strong>Peer-to-Peer</strong> model has the obvious benefits of being decentralized, like <em>enhanced privacy</em>, <em>fault-tolerance</em> and no <a href="https://en.wikipedia.org/wiki/Single_point_of_failure" target="_blank">SPOF</a>. However, from a business SaaS point of view, where things like centralized authentication, access management, billing and more recently, AI Agents are must-haves, the <strong>Client-Server</strong> model takes center stage.</p>
+
+<h4 id="the-client-server-model">The Client-Server Model</h4>
+<p>From a rather crude perspective, the <strong>Client-Server</strong> model is implemented as below.</p>
+
+<pre><code class="language-mermaid">flowchart LR
+A(Alice)
+B(Bob)
+C((App Server))
+
+A --&gt;|Hi! What's up?| C --&gt;|Hi! What's up?| B
+</code></pre>
+
+<p>When Alice hits send on her messaging app, the message is first routed to the App server, which, in no particular order:</p>
+
+<ul>
+  <li>Authenticates the user.</li>
+  <li>Checks necessary permissions.</li>
+  <li>Applies filters for sensitive content.</li>
+  <li>Persists the message to a database for durability.</li>
+  <li>Bills the account</li>
+  <li>…</li>
+</ul>
+
+<p>And then finally routes the message to the intended recipient, Bob.</p>
+
+<h2 id="building-blocks">Building blocks</h2>
+
+<p>Conduit is built using the following components.</p>
+
+<ul>
+  <li>A highly-scalable messaging server at the core.</li>
+  <li>A high-performance, async HTTP API.</li>
+  <li>A robust relational database.</li>
+  <li>A simple event poller/dispatcher.</li>
+</ul>
+
+<pre><code class="language-mermaid">flowchart LR
+subgraph conduit[Conduit]
+A(Async HTTP API)
+B((Messaging Server))
+C[(Database)]
+F(Event dispatcher)
+end
+</code></pre>
+
+<p>Each component is implemented using <a href="https://en.wikipedia.org/wiki/Free_and_open-source_software">FOSS</a> tools.</p>
+
+<h4 id="centrifugo"><a href="https://github.com/centrifugal/centrifugo" target="_blank">Centrifugo</a></h4>
+
+<p><em>Centrifugo</em> is a real-time, pub/sub messaging server written in Go. It provides some very valuable features like:</p>
+
+<ul>
+  <li>Real-time transports (WebSocket, SSE, gRPC etc.)</li>
+  <li>Built-in horizontal scalability via <em>Redis</em></li>
+  <li>Online Presence information</li>
+  <li>JSON and protobuf support</li>
+</ul>
+
+<p><em>Centrifugo</em> powers the real-time message delivery for <em>Conduit</em> via it’s WebSocket transport. 
+Users are subscribed to their own individual channels on app startup/login, so they can receive any messages published on that channel.</p>
+
+<h4 id="fastapi"><a href="https://github.com/fastapi/fastapi" target="_blank">FastAPI</a></h4>
+
+<p><em>Conduit’s</em> HTTP API, used for sending messages is built using <em>FastAPI</em> due to it’s async capabilities coupled with Python’s simplicity.</p>
+
+<h4 id="postgresql"><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></h4>
+
+<p><em>PostgreSQL</em> is the rightly-proclaimed “world’s most advanced open-source database”. No other database comes close in my opinion.</p>
+
+<h4 id="redis"><a href="https://redis.io/" target="_blank">Redis</a></h4>
+
+<p>At the moment, <em>Redis</em> is primarily used for scaling the <em>Centrifugo</em> cluster.</p>
+
+<h2 id="design">Design</h2>
+
+<p><em>Conduit</em> is a <a href="https://en.wikipedia.org/wiki/Distributed_computing" target="_blank">distributed system</a> by nature and one of the (many) problems that arise when building distributed systems is when you have to update database state AND notify another service about it atomically. The two major patterns which attempt to solve this problem are <a href="https://microservices.io/patterns/data/transactional-outbox.html">The Transactional Outbox Pattern</a> and <a href="https://microservices.io/patterns/data/event-sourcing.html">The Event Sourcing Pattern</a>. <em>Conduit</em> implements the former.</p>
+
+<p>When we send a message using <em>Conduit’s</em> HTTP API, it is persisted in the database and a corresponding outbox event is created for it, in a single transaction. The event dispatcher, implementing <a href="https://microservices.io/patterns/data/polling-publisher.html">The Polling Publisher Pattern</a>, then reads events from the outbox and dispatches them to <em>Centrifugo</em> which delivers the messages in real-time to clients.</p>
+
+<h2 id="putting-it-all-together">Putting it all together</h2>
+
+<p>Let’s go back to our original example of Alice sending a message to Bob.</p>
+
+<p>Now with an app on their phones using <em>Conduit</em> as it’s messaging backend, a typical send message flow looks like this:</p>
+
+<ol>
+  <li>Alice types out a text message for Bob and hits send.</li>
+  <li>The app sends the message to <em>Conduit’s</em> HTTP API via a POST request.</li>
+  <li><em>Conduit</em> authorizes the send request, persists the message AND the outbox event to the database, and returns a successful response.</li>
+  <li>The event dispatcher picks up the new event in almost real-time (&lt; 300 ms) and sends it to the messaging server.</li>
+  <li>The messaging server broadcasts the event to all channel subscribers over WebSockets.</li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p><em>Conduit</em> is still in relatively early stages and will probably go through major changes as new problems come up.
+If you made it this far, please make sure to check out <a href="https://rhythmiqcx.com" target="_blank">RhythmiqCX</a>, to experience <em>Conduit</em> in some real-time action!</p>]]></content><author><name></name></author><summary type="html"><![CDATA[In this post, I’ll be going over the design and implementation of one of my recent projects, Conduit. Conduit is the messaging backend powering the AI Customer Support Platform, RhythmiqCX.]]></summary></entry></feed>
