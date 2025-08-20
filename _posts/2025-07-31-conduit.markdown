@@ -37,7 +37,7 @@ When Alice hits send on her messaging app, the message is first routed to the Ap
 - Applies filters for sensitive content.
 - Persists the message to a database for durability.
 - Bills the account
-- ...
+- And so on...
 
 And then finally routes the message to the intended recipient, Bob.
 
