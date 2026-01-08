@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-#### Hi :wave:,
+#### Hi :wave:
 
 I'm a Software Developer with 4 years of experience architecting **scalable backend systems**, optimizing **high-throughput SQL databases**, building **seamless user interfaces** and more recently, engineering **real-time communication platforms** where *uptime*, *availability* and *performance* are mission-critical.
 
@@ -15,10 +15,17 @@ I'm always on the lookout for exciting problems to work on. Please feel free to 
 
 ## Projects
 
-### [Teler](https://frejun.ai){:target="_blank"}
-Global Voice Infrastructure for AI Agents and LLMs.
+### [Enterprise RAG](/blog/rag){:target="_blank"}
+A fully offline, advanced RAG system designed for secure, enterprise deployments. 
 
-Built on a distributed microservice architecture, Teler delivers advanced capabilities including **bidirectional media streaming**, **SIP trunking**, and **real-time STT/TTS**. Apart from building Teler's core VoIP infrastructure, I also wrote the [Python SDK](https://pypi.org/project/teler/){:target="_blank"}, and parts of the [Docusaurus-based documentation](https://frejun.ai/docs/){:target="_blank"}.
+Integrates hybrid retrieval combining **BM25 ranking** with **Dense vector search**, leverages **high-throughput vLLM inference** for scalable LLM and embedding workloads, and employs advanced chunking strategies to preserve semantic and structural fidelity. It further supports **asynchronous, distributed file indexing** with robust status tracking, and provides native ingestion for a broad spectrum of enterprise document formats including *PDF, DOCX, PPTX, XLSX, CSV, and Markdown*.
+
+This project inspired my recent blog post [Enterprise RAG: Production-grade RAG goes offline](/blog/rag){:target="_blank"}.
+
+### [Teler](https://frejun.ai){:target="_blank"}
+Voice Infrastructure for AI Agents and LLMs.
+
+Built on a distributed microservice architecture, Teler delivers advanced capabilities including **SIP trunking**, **bidirectional media streaming**, and **real-time STT/TTS**. Apart from building Teler's core VoIP infrastructure, I also wrote the [Python SDK](https://pypi.org/project/teler/){:target="_blank"}, and parts of the [Docusaurus-based documentation](https://frejun.ai/docs/){:target="_blank"}.
 
 ### [Kinto (Open-source)](https://github.com/Kinto/kinto){:target="_blank"}
 A generic JSON document store with sharing and synchronisation capabilities.
