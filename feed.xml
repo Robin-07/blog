@@ -1,4 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://robinsharma.me/feed.xml" rel="self" type="application/atom+xml" /><link href="https://robinsharma.me/" rel="alternate" type="text/html" /><updated>2025-08-20T17:35:07+05:30</updated><id>https://robinsharma.me/feed.xml</id><title type="html">Robin Sharma</title><subtitle>Full-stack Software Developer</subtitle><entry><title type="html">Building Conduit: A Scalable, Real-time messaging system</title><link href="https://robinsharma.me/blog/conduit/" rel="alternate" type="text/html" title="Building Conduit: A Scalable, Real-time messaging system" /><published>2025-07-30T04:00:00+05:30</published><updated>2025-07-30T04:00:00+05:30</updated><id>https://robinsharma.me/blog/conduit</id><content type="html" xml:base="https://robinsharma.me/blog/conduit/"><![CDATA[<p>In this post, I’ll be going over the design and implementation of one of my recent projects, <em>Conduit</em>.<br />
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://robinsharma.me/feed.xml" rel="self" type="application/atom+xml" /><link href="https://robinsharma.me/" rel="alternate" type="text/html" /><updated>2026-01-08T15:28:54+05:30</updated><id>https://robinsharma.me/feed.xml</id><title type="html">Robin Sharma</title><subtitle>Full-stack Software Developer</subtitle><entry><title type="html">Enterprise RAG: Production-grade RAG goes offline</title><link href="https://robinsharma.me/blog/rag/" rel="alternate" type="text/html" title="Enterprise RAG: Production-grade RAG goes offline" /><published>2026-01-06T10:00:00+05:30</published><updated>2026-01-06T10:00:00+05:30</updated><id>https://robinsharma.me/blog/rag</id><content type="html" xml:base="https://robinsharma.me/blog/rag/"><![CDATA[<p><a id="page-top"></a>
+Recently, I had the opportunity to build an interesting <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation" target="_blank">RAG (Retrieval-Augmented Generation)</a> system.
+What made it uniquely challenging (and exciting!) was the fact that it was part of a larger project which was specifically designed to run <strong>on-prem</strong>, in an <strong>air-gapped</strong> environment. This meant that the underlying infrastructure had to exist and run <strong>fully offline</strong>.</p>
+
+<p>In this blog post, we’ll take a look at the system’s architecture, the challenges faced and some advanced techniques and optimizations that made it all come together.</p>
+
+<p><img src="/assets/images/rag.png" alt="RAG Diagram" /></p>
+
+<h2 id="setting-a-vision">Setting a vision</h2>
+
+<p>Before starting a project, I think it’s always good to set a few high-level goals. These goals help immensely with downstream technical decisions and serve as guiding principles for the project.<br />
+Following were my goals for this RAG system, in order.</p>
+
+<ul>
+  <li>Secure and Compliant</li>
+  <li>Accurate and Robust</li>
+  <li>Highly Performant (High throughput, Low latency)</li>
+  <li>Simple and Modular</li>
+</ul>
+
+<h2 id="starting-with-the-basics">Starting with the basics</h2>
+
+<p>At its core, a RAG system is responsible for 2 things — <strong>Indexing</strong> and <strong>Retrieval</strong>.<br />
+In a basic setup, the pipelines might look something like this.</p>
+
+<pre><code class="language-mermaid">flowchart TD
+
+subgraph retrieval[Retrieval]
+D(Query pre-processing)
+E(Vector search)
+F(LLM response generation)
+end
+
+subgraph indexing[Indexing]
+A(Document Conversion)
+B(Chunking)
+C(Embedding generation)
+end
+
+A --&gt; B --&gt; C
+D --&gt; E --&gt; F
+</code></pre>
+
+<p>We take a document, convert it to a common format like <em>Markdown</em>, split it into fixed-size chunks (with some overlap), create vector embeddings and persist them to our database. Then, at query time, we do a vector search on the indexed chunks, pick the most relevant/best ranking ones and feed them to an LLM to generate a response.</p>
+
+<p>It works, and for many cases, this might be good enough… but we’re looking for something a bit more serious ;)</p>
+
+<h2 id="raising-the-bar">Raising the bar</h2>
+
+<p>The basic RAG system described above has <strong>many limitations</strong>. It doesn’t, for example, do a very good job at searching for <strong>exact terms, phrases, or IDs</strong>. Fixed-size chunking misses <strong>semantic and structural shifts</strong> across texts and ends up splitting text abruptly. It also doesn’t handle metadata like <strong>tags, section IDs, and page numbers</strong> which could be used at query time to condense our search space and provide helpful citations to users. It doesn’t handle summarization for <strong>large documents</strong> that exceed the size of our context window. And a pretty major one, it doesn’t understand <strong>scanned documents</strong> at all!</p>
+
+<p>After multiple deep dives, trials and errors and iterations into the effort, this is how we solved each of the above challenges.</p>
+
+<ul>
+  <li><strong>Hybrid document conversion</strong> - Along with native text extraction libraries like <a href="https://github.com/py-pdf/pypdf">pypdf</a>, <a href="https://github.com/microsoft/markitdown">markitdown</a> and <a href="https://github.com/scanny/python-pptx">python-pptx</a>, we integrated <a href="https://github.com/PaddlePaddle/PaddleOCR">PaddleOCR</a>, particularly, their recent <a href="https://huggingface.co/PaddlePaddle/PaddleOCR-VL">PaddleOCR-VL</a> model for OCR.</li>
+  <li><strong>Semantic chunking</strong> - After exploring multiple libraries, we settled on <a href="https://github.com/chonkie-inc/chonkie">Chonkie</a>. It gave us exactly what we were looking for — a tiny, chunking-focused library implementing semantic chunking with advanced features like <em>Savitzky-Golay filtering</em> and <em>Skip-window merging</em>.</li>
+  <li><strong>Hybrid search</strong> - We combined vector search with keyword search, joined our results using <a href="https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion">RRF</a> and fed them through a cross-encoder for reranking. For keyword search, we first experimented with <a href="https://www.postgresql.org/docs/current/textsearch.html">PostgreSQL’s native FTS</a> but found the gold standard <a href="https://en.wikipedia.org/wiki/Okapi_BM25">BM25</a> algorithm to be much better.</li>
+  <li><strong>Contextual retrieval</strong> - This technique <a href="https://www.anthropic.com/engineering/contextual-retrieval">introduced by Anthropic in 2024</a> improves semantic search by contextualizing each chunk w.r.t its place in the document. This is typically very costly in terms of performance, since we need to run LLM inference on each chunk. <a href="https://docs.vllm.ai/en/stable/design/prefix_caching/">vLLM’s prefix caching</a> made this an effective and viable approach for us.</li>
+  <li><strong>Map-reduce summarization</strong> - This comes directly from the well established <a href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a> programming model for distributed systems. For summarizing large documents that don’t fit entirely in the context window of our LLM, we summarize document chunks in parallel, and then aggregate the summaries. We do this recursively until we get a final, cohesive summary.</li>
+</ul>
+
+<p>Finally, <a href="#page-top">this</a> is what our pipelines evolved to look like.</p>
+
+<h2 id="the-tech-stack">The tech stack</h2>
+
+<p>Being constrained to an offline environment, we built the system using the best, <em>permissively-licensed</em>, <a href="https://en.wikipedia.org/wiki/Free_and_open-source_software">FOSS</a> tools.</p>
+
+<ul>
+  <li><strong><a href="https://vllm.ai/">vLLM</a></strong> - High-throughput LLM inference</li>
+  <li><strong><a href="https://github.com/fastapi/fastapi">FastAPI</a></strong> - Async REST API</li>
+  <li><strong><a href="https://docs.celeryq.dev/en/stable/">Celery</a></strong> - Distributed task queue for background indexing jobs</li>
+  <li><strong><a href="https://haystack.deepset.ai/">Haystack</a></strong> - LLM framework. <a href="https://www.langchain.com/">Langchain</a> is another solid option</li>
+  <li><strong><a href="https://www.postgresql.org/">Postgres</a></strong> - Powered by the <a href="https://github.com/pgvector/pgvector">pgvector</a> and <a href="https://github.com/timescale/pg_textsearch">pg_textsearch</a> extensions, Postgres served as our Vector and BM25 Index</li>
+  <li><strong><a href="https://redis.io/">Redis</a></strong> - Cache and Message Broker</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<p>Following are some great resources that helped me during my RAG deep dive.</p>
+<ol>
+  <li><strong>vLLM Performance Tuning</strong> - <a href="https://docs.vllm.ai/en/stable/configuration/optimization/">https://docs.vllm.ai/en/stable/configuration/optimization/</a></li>
+  <li><strong>Anthropic Contextual Retrieval Blog</strong> - <a href="https://www.anthropic.com/engineering/contextual-retrieval/">https://www.anthropic.com/engineering/contextual-retrieval/</a></li>
+  <li><strong>Hugging Face MTEB Leaderboard</strong> - <a href="https://huggingface.co/spaces/mteb/leaderboard/">https://huggingface.co/spaces/mteb/leaderboard/</a></li>
+  <li><strong>Tiger Data BM25 Blog</strong> - <a href="https://www.tigerdata.com/blog/you-dont-need-elasticsearch-bm25-is-now-in-postgres">https://www.tigerdata.com/blog/you-dont-need-elasticsearch-bm25-is-now-in-postgres</a></li>
+  <li><strong>Chonkie</strong> - <a href="https://docs.chonkie.ai/">https://docs.chonkie.ai/</a></li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The system is by no means <strong>complete</strong>. There are many potential improvements like <a href="https://arxiv.org/abs/2501.00309">GraphRAG</a>, which grounds the entities and relationships in data into a Graph database which can then be used to answer queries that span facts/entities across documents. We could also make the system <em><a href="https://www.ibm.com/think/topics/agentic-rag">Agentic</a></em> by arming it with tools and long-term memory so that each query is processed using an optimized plan.</p>
+
+<p>That’s it for today :wave:!</p>
+
+<p>If you found this useful or want to discuss anything further, feel free to reach out to me <a href="mailto:hello@robinsharma.me">here</a>.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[Recently, I had the opportunity to build an interesting RAG (Retrieval-Augmented Generation) system. What made it uniquely challenging (and exciting!) was the fact that it was part of a larger project which was specifically designed to run on-prem, in an air-gapped environment. This meant that the underlying infrastructure had to exist and run fully offline.]]></summary></entry><entry><title type="html">Building Conduit: A Scalable, Real-time messaging system</title><link href="https://robinsharma.me/blog/conduit/" rel="alternate" type="text/html" title="Building Conduit: A Scalable, Real-time messaging system" /><published>2025-07-30T04:00:00+05:30</published><updated>2025-07-30T04:00:00+05:30</updated><id>https://robinsharma.me/blog/conduit</id><content type="html" xml:base="https://robinsharma.me/blog/conduit/"><![CDATA[<p>In this post, I’ll be going over the design and implementation of one of my recent projects, <em>Conduit</em>.<br />
 <em>Conduit</em> is the messaging backend powering the <a href="https://rhythmiqcx.com" target="_blank">AI Customer Support Platform</a>, <em>RhythmiqCX</em>.</p>
 
 <h2 id="messaging-primer">Messaging primer</h2>
