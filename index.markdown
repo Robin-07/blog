@@ -3,15 +3,24 @@ layout: page
 title: About
 ---
 
-#### Hi :wave:
+I build production-grade systems across B2B SaaS, real-time communications, and AI infrastructure.
 
-I'm a software developer with 4+ years of experience building scalable systems across SaaS, real-time communications, and AI.
+I joined [FreJun](https://frejun.com){:target="_blank"} in 2022 and spent nearly 4 years as part of the founding team, initially as a full-stack engineer and later as tech lead. During this time, I helped build the voice platform from the ground up, growing it to process 500K+ calls daily with global reach and high availability.
 
-I joined [FreJun](https://frejun.com){:target="_blank"} in 2022 as a founding engineer and helped build and scale the platform from the ground up, growing it to process 500K+ calls daily with global reach and high availability. In 2025, I built and launched [Teler](https://frejun.ai){:target="_blank"}, a voice infrastructure platform for AI Agents. Since November 2025, I've been working independently as a contractor, primarily building solutions in the Enterprise and Voice AI space. 
+In 2025, I led the development of [FreJun Teler](https://frejun.ai){:target="_blank"}, building voice infrastructure designed for the AI era.
 
-Being an obsessive learner and problem solver, I'm always on the lookout for exciting problems to work on. Please feel free to get in touch with me at [hello@robinsharma.me](mailto:hello@robinsharma.me)
+Following this, I operated independently, working closely with startups to ship end-to-end systems, including voice AI infrastructure at [BotSpace](https://www.bot.space/){:target="_blank"} and a fully local, [enterprise RAG system](/blog/rag){:target="_blank"}.
+
+Recently, I joined [Glacis](https://glacis.com){:target="_blank"} as a founding engineer, where I'm building at the intersection of supply chains and Agentic AI.
+
+Reach out to me at [hello@robinsharma.me](mailto:hello@robinsharma.me)
 
 ## Projects
+
+### [Teler](https://frejun.ai){:target="_blank"}
+Voice Infrastructure for AI Agents.
+
+Built on a distributed microservice architecture, Teler delivers advanced capabilities including SIP trunking, bidirectional media streaming, and real-time STT/TTS. Apart from building Teler's core VoIP infrastructure, I also wrote the [Python SDK](https://pypi.org/project/teler/){:target="_blank"}, many [reference implementations](https://github.com/frejun-tech){:target="_blank"}, and the Docusaurus-based [developer documentation](https://frejun.ai/docs/){:target="_blank"}.
 
 ### [Enterprise RAG](/blog/rag){:target="_blank"}
 A fully offline, advanced RAG system designed for secure, enterprise deployments. 
@@ -19,11 +28,6 @@ A fully offline, advanced RAG system designed for secure, enterprise deployments
 Integrates hybrid retrieval combining BM25 ranking with Dense vector search, leverages high-throughput vLLM inference for scalable LLM and embedding workloads, and employs advanced chunking strategies to preserve semantic and structural fidelity. It further supports asynchronous, distributed file indexing with robust status tracking, and provides native ingestion for a broad spectrum of enterprise document formats including *PDF, DOCX, PPTX, XLSX, CSV, and Markdown*.
 
 This project inspired my recent blog post [Enterprise RAG: Production-grade RAG goes offline](/blog/rag){:target="_blank"}.
-
-### [Teler](https://frejun.ai){:target="_blank"}
-Voice Infrastructure for AI Agents.
-
-Built on a distributed microservice architecture, Teler delivers advanced capabilities including SIP trunking, bidirectional media streaming, and real-time STT/TTS. Apart from building Teler's core VoIP infrastructure, I also wrote the [Python SDK](https://pypi.org/project/teler/){:target="_blank"}, many [reference implementations](https://github.com/frejun-tech){:target="_blank"}, and the Docusaurus-based [developer documentation](https://frejun.ai/docs/){:target="_blank"}.
 
 ### [Kinto (Open-source)](https://github.com/Kinto/kinto){:target="_blank"}
 A generic JSON document store with sharing and synchronisation capabilities. Used at [Mozilla](https://www.mozilla.org/){:target="_blank"}.

@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "Joining the Toptal Network"
+date:   2026-03-29 04:00:00 +0530
+permalink: blog/joining-toptal/
+mermaid: true
+---
+
+I recently [joined the Toptal network](https://www.toptal.com/developers/resume/robin-sharma){:target="_blank"}.
+
+The first time I'd heard about Toptal was a few years ago when I came across this [YouTube video](https://youtu.be/r7ZWUvjvOAQ?si=dxDMPL20E6hnK_Jg). It resonated with me for two reasons; the exclusivity of the network and the remote nature of the work. So when I recently made the decision to work independently, I decided to apply for Toptal. 
+
+The process involved multiple stages of interviews focusing on communication, problem-solving, and real-world development scenarios, spread over a few weeks. The Toptal team was extremely professional and helpful throughout it all. I personally found the final round (take-home project) the most challenging. The expectation is for you to deliver and present the project as you would for an actual client. And you're even asked to make some changes on the fly during the interview.
+
+I'm not actively looking for jobs through Toptal right now, but nevertheless, excited to be a part!
