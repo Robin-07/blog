@@ -1,0 +1,17 @@
+#  The contact options.
+
+- type: github
+  url: "https://github.com/Robin-07"
+  image: "/assets/images/github.svg"
+
+- type: linkedin
+  url: "https://www.linkedin.com/in/robin-software-developer"
+  image: "/assets/images/linkedin.svg"
+
+- type: email
+  url: "mailto:hello@robinsharma.me"
+  image: "/assets/images/email.svg"
+
+- type: toptal
+  url: "https://www.toptal.com/developers/resume/robin-sharma"
+  image: "/assets/images/toptal.svg"
